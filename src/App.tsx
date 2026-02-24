@@ -1,34 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { SideBar } from "./componnets/SideBar/SideBar"
+import { useEffect, useState } from 'react'
+import type { ICountyShort } from "./types/types"
+import { BASE_URL } from "./constants"
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [countiesList, setCountriesList] = useState<ICountyShort[]>([])
+
+  useEffect(()=> {
+    const getCountries = async() => {
+      try {
+        const response = await fetch(`${BASE_URL}/all?fields=alpha3Code,name`)
+        if (!response.ok) {
+          throw new Error 
+        }
+        const data:ICountyShort[] = await response.json()
+        console.log('data', data)
+        setCountriesList(data)
+      } catch(e) {
+        console.log(e)
+      }
+    }
+    getCountries()
+  },[]);
+
+  const getCountriesByName = (name: string) => {
+    // todo add async
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+   <div>
+    <SideBar/>
+   </div>
   )
 }
 
